@@ -17,7 +17,6 @@ public class CalculatorSteps {
         calculator = new Calculator();
     }
 
-
     @When("I add {int} and {int}")
     public void iAdd(int a, int b) {
         result = calculator.add(a, b);
