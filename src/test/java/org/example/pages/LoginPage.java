@@ -2,6 +2,7 @@ package org.example.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public class LoginPage {
 
@@ -24,10 +25,14 @@ public class LoginPage {
     }
 
     public void login(String username, String password) {
-        driver.findElement(USERNAME).clear();
-        driver.findElement(USERNAME).sendKeys(username);
-        driver.findElement(PASSWORD).clear();
-        driver.findElement(PASSWORD).sendKeys(password);
+        WebElement usernameField = driver.findElement(USERNAME);
+        usernameField.clear();
+        usernameField.sendKeys(username);
+
+        WebElement passwordField = driver.findElement(PASSWORD);
+        passwordField.clear();
+        passwordField.sendKeys(password);
+
         driver.findElement(LOGIN_BUTTON).click();
     }
 
