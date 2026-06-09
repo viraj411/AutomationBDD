@@ -21,7 +21,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
       - name: Run Cucumber tests
+        env:
+          CI: true
         run: mvn test -s maven-settings-central.xml
 
       - name: Publish test summary
