@@ -25,6 +25,12 @@ jobs:
       - name: Run Cucumber tests
         run: mvn test -s maven-settings-central.xml
 
+      - name: Publish test summary
+        if: always()
+        run: |
+          echo "## Cucumber Results" >> $GITHUB_STEP_SUMMARY
+          echo "See full HTML report in Artifacts below." >> $GITHUB_STEP_SUMMARY
+
       - name: Upload Cucumber HTML report
         if: always()
         uses: actions/upload-artifact@v4
