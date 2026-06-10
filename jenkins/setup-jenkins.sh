@@ -61,7 +61,8 @@ echo "==> Downloading Jenkins CLI..."
 curl -fsSL "$JENKINS_URL/jnlpJars/jenkins-cli.jar" -o /tmp/jenkins-cli.jar
 
 echo "==> Creating AutomationBDD pipeline job..."
-java -jar /tmp/jenkins-cli.jar -s "$JENKINS_URL" -auth "${ADMIN_USER}:${ADMIN_PASS}" groovy = <<GROOVY
+INITIAL_PASS=$(cat "$JENKINS_HOME/secrets/initialAdminPassword" 2>/dev/null || echo "$ADMIN_PASS")
+java -jar /tmp/jenkins-cli.jar -s "$JENKINS_URL/" -auth "${ADMIN_USER}:${INITIAL_PASS}" groovy = <<GROOVY
 if (Jenkins.instance.getItem('AutomationBDD') == null) {
     def jobXml = '''<?xml version='1.1' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job">
@@ -88,7 +89,7 @@ if (Jenkins.instance.getItem('AutomationBDD') == null) {
   </definition>
   <disabled>false</disabled>
 </flow-definition>'''
-    Jenkins.instance.createProjectFromXML('AutomationBDD', new StringReader(jobXml))
+    Jenkins.instance.createProjectFromXML('AutomationBDD', new ByteArrayInputStream(jobXml.getBytes('UTF-8')))
     println 'Job AutomationBDD created'
 } else {
     println 'Job AutomationBDD already exists'
@@ -96,7 +97,7 @@ if (Jenkins.instance.getItem('AutomationBDD') == null) {
 GROOVY
 
 echo "==> Triggering first build..."
-java -jar /tmp/jenkins-cli.jar -s "$JENKINS_URL" -auth "${ADMIN_USER}:${ADMIN_PASS}" build AutomationBDD -s -v
+java -jar /tmp/jenkins-cli.jar -s "$JENKINS_URL/" -auth "${ADMIN_USER}:${INITIAL_PASS}" build AutomationBDD -s -v
 
 echo ""
 echo "============================================"

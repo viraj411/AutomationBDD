@@ -42,13 +42,7 @@ pipeline {
                 allowEmptyArchive: true
             )
 
-            allure([
-                includeProperties: false,
-                jdk: '',
-                properties: [],
-                reportBuildPolicy: 'ALWAYS',
-                results: [[path: 'target/allure-results']]
-            ])
+            allure results: [[path: 'target/allure-results']]
         }
         success {
             echo 'All BDD scenarios passed.'
