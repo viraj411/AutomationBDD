@@ -26,4 +26,14 @@ public class CalculatorSteps {
     public void theResultShouldBe(int expected) {
         Assertions.assertEquals(expected, result);
     }
+
+
+    @When("I subtract {int} and {int}")
+    public void iSubtract(int a, int b) {
+        result = calculator.subtract(a, b);
+    }
+    @Then("the result should be subtracted {int}")
+    public void theResultShouldBeSubtract(int expected) {
+        Assertions.assertEquals(expected, result);
+    }
 }
