@@ -42,7 +42,11 @@ pipeline {
                 allowEmptyArchive: true
             )
 
-            allure results: [[path: 'target/allure-results']]
+            archiveArtifacts(
+                artifacts: 'target/allure-results/**',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
         }
         success {
             echo 'All BDD scenarios passed.'
