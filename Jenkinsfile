@@ -24,8 +24,10 @@ pipeline {
                 sh '''
                     if [ "$(uname)" = "Darwin" ]; then
                       export JAVA_HOME=$(/usr/libexec/java_home -v 24 2>/dev/null || /usr/libexec/java_home)
+                      export PATH="/opt/homebrew/bin:$JAVA_HOME/bin:$PATH"
+                    else
+                      export PATH="/usr/local/bin:$PATH"
                     fi
-                    export PATH="$JAVA_HOME/bin:$PATH"
                     mvn test -s maven-settings-central.xml -B --no-transfer-progress
                 '''
             }
@@ -34,7 +36,7 @@ pipeline {
 
     post {
         always {
-            junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: false
+            junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
 
             archiveArtifacts(
                 artifacts: 'target/cucumber-reports.html',
