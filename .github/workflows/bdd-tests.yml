@@ -5,6 +5,7 @@ on:
     branches: [ main, feat/testOne, feat/viraj ]
   pull_request:
     branches: [ main, feat/testOne ]
+  workflow_dispatch:
 
 # Allow the workflow to publish the Allure report to the gh-pages branch
 permissions:
