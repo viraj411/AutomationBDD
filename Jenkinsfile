@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '15'))
+        timeout(time: 30, unit: 'MINUTES')
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        CI = 'true'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Run BDD Tests') {
+            steps {
+                sh '''
+                    if [ "$(uname)" = "Darwin" ]; then
+                      export JAVA_HOME=$(/usr/libexec/java_home -v 24 2>/dev/null || /usr/libexec/java_home)
+                    fi
+                    export PATH="$JAVA_HOME/bin:$PATH"
+                    mvn test -s maven-settings-central.xml -B --no-transfer-progress
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: false
+
+            archiveArtifacts(
+                artifacts: 'target/cucumber-reports.html',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+
+            allure([
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: 'target/allure-results']]
+            ])
+        }
+        success {
+            echo 'All BDD scenarios passed.'
+        }
+        failure {
+            echo 'BDD tests failed — check Allure and console logs.'
+        }
+    }
+}
